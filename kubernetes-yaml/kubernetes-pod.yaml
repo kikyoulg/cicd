@@ -1,0 +1,55 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: cicd
+spec:
+  containers:
+  - name: maven
+    image: registry.zet-fl.com/msmp/maven:3.8.7
+    command:
+    - cat
+    tty: true
+    imagePullPolicy: IfNotPresent
+    volumeMounts:
+    - name: maven-cache
+      mountPath: /root/.m2
+    - name: maven-cm
+      mountPath: /usr/share/maven/conf/settings.xml
+      subPath: settings.xml
+  - name: yarn
+    image: registry.zet-fl.com/msmp/node:14.17.5
+    command:
+    - cat
+    tty: true
+    imagePullPolicy: IfNotPresent
+    volumeMounts:
+    - name: yarn-cache
+      mountPath: /usr/local/share/.cache/yarn/v6
+  - name: docker
+    image: registry.zet-fl.com/msmp/docker:latest
+    imagePullPolicy: IfNotPresent
+    command:
+    - cat
+    tty: true
+    volumeMounts:
+    - name: docker-socket
+      mountPath: /var/run/docker.sock
+  - name: kubectl
+    image: registry.zet-fl.com/bsd/kubectl:1.20.2
+    imagePullPolicy: IfNotPresent
+    command:
+    - cat
+    tty: true
+  volumes:
+  - name: maven-cm
+    configMap:
+      name: maven-cm
+  - name: maven-cache
+    persistentVolumeClaim:
+      claimName: pvc-maven
+  - name: yarn-cache
+    persistentVolumeClaim:
+      claimName: pvc-yarn
+  - name: docker-socket
+    hostPath:
+      path: /var/run/docker.sock

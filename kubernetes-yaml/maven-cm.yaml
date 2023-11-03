@@ -1,0 +1,84 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: maven-cm
+  namespace: cicd
+data:
+  settings.xml: |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <settings xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.1.0 http://maven.apache.org/xsd/settings-1.1.0.xsd" xmlns="http://maven.apache.org/SETTINGS/1.1.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <!-- <localRepository>~/.m2/repository</localRepository> -->
+      <pluginGroups>
+        <pluginGroup>org.sonarsource.scanner.maven</pluginGroup>
+      </pluginGroups>
+      <servers>
+        <server>
+          <id>libs-release</id>
+          <username>rdx_trainning</username>
+          <password>LtA4W%Cw</password>
+        </server>
+        <server>
+          <id>streamtau-release</id>
+          <username>rdx_trainning</username>
+          <password>LtA4W%Cw</password>
+        </server>
+        <server>
+          <id>streamtau-snapshot</id>
+          <username>rdx_trainning</username>
+          <password>LtA4W%Cw</password>
+        </server>
+      </servers>
+      <mirrors>
+        <mirror>
+          <id>aliyun</id>
+          <name>Aliyun Central</name>
+          <url>http://maven.aliyun.com/nexus/content/groups/public</url>
+          <mirrorOf>central</mirrorOf>
+        </mirror>
+      </mirrors>
+      <profiles>
+        <profile>
+          <repositories>
+            <repository>
+              <snapshots>
+                <enabled>false</enabled>
+              </snapshots>
+              <id>streamtau-release</id>
+              <name>streamtau-release</name>
+              <url>http://repo.datacanvas.com:8081/artifactory/streamtau-release</url>
+            </repository>
+            <repository>
+              <snapshots />
+              <id>streamtau-snapshot</id>
+              <name>streamtau-snapshot</name>
+              <url>http://repo.datacanvas.com:8081/artifactory/streamtau-snapshot</url>
+            </repository>
+            <repository>
+              <snapshots>
+                <enabled>false</enabled>
+              </snapshots>
+              <id>libs-release</id>
+              <name>libs-release</name>
+              <url>http://repo.datacanvas.com:8081/artifactory/libs-release</url>
+            </repository>
+          </repositories>
+          <id>artifactory</id>
+        </profile>
+        <profile>
+            <id>sonar</id>
+            <activation>
+                    <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <!-- Optional URL to server. Default value is http://localhost:9000 -->
+                <sonar.host.url> http://172.20.8.245:9000 </sonar.host.url>
+                <sonar.login> admin </sonar.login>
+                <sonar.password> Zetyun@sonarqube </sonar.password>
+            </properties>
+        </profile>
+      </profiles>
+      <activeProfiles>
+        <activeProfile>artifactory</activeProfile>
+      </activeProfiles>
+    </settings>

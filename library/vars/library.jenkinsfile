@@ -1,0 +1,15 @@
+def pod_update(project_name, harbor_url, new_image_tag, now_image_tag) {
+    if ("${new_image_tag}" == "${now_image_tag}") {
+        sh script: """
+            kubectl get pod -A | grep ${project_name} | awk \"{print \"kubectl delete pod --force --grace-period=0 -n \"\$1\" \$2\"}\" | bash
+        """
+    } else {
+        echo "不等于"
+        echo "${new_image_tag}"
+        echo "${now_image_tag}"
+        sh script: """
+            kubectl get namespaces -o jsonpath='{.items[*].metadata.name}' | tr ' ' '\\n' | xargs -I {} kubectl -n {} set image deployment/bsd-container bsd-container=${project_name}:${new_image_tag}'
+        """, returnStatus: true
+    }
+}
+return this
